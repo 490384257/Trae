@@ -201,6 +201,44 @@
     }
     .add-item:hover { background: var(--accent-soft); }
 
+    /* ---- sub-item: status + date ---- */
+    ul.items li.item-li {
+      display: block; padding: 0; gap: 0; cursor: default; border-radius: 8px;
+    }
+    ul.items li.item-li:hover { background: transparent; }
+    .it-row {
+      display: flex; gap: 6px; align-items: flex-start;
+      padding: 5px 6px 5px 8px; border-radius: 8px; cursor: default;
+    }
+    .it-row:hover { background: var(--bg); }
+    .it-st {
+      flex: none; font-family: var(--font); font-size: 10.5px; font-weight: 700;
+      padding: 1px 6px; margin-top: 2px; border-radius: 999px;
+      border: 1px solid; cursor: pointer; white-space: nowrap;
+      transition: transform .1s;
+    }
+    .it-st:active { transform: scale(.93); }
+    .it-date {
+      flex: none; font-family: var(--font); font-size: 10.5px; font-weight: 600;
+      color: var(--muted); background: var(--bg);
+      border: 1px solid var(--rule); border-radius: 6px;
+      padding: 1px 5px; margin-top: 2px; cursor: pointer; white-space: nowrap;
+    }
+    .it-date.has { color: var(--accent); background: var(--accent-soft); border-color: #C9C9F5; }
+    .it-date:hover { border-color: var(--accent); }
+    .it-dates {
+      display: none; gap: 6px; align-items: center; flex-wrap: wrap;
+      padding: 2px 8px 6px 26px;
+    }
+    .item-li.open .it-dates { display: flex; }
+    .it-dates input[type="date"] {
+      font-family: var(--font); font-size: 11.5px; color: var(--ink);
+      background: var(--bg); border: 1px solid var(--rule); border-radius: 6px;
+      padding: 2px 4px; width: 116px;
+    }
+    .it-dates input[type="date"]:focus { outline: none; border-color: var(--accent); background: var(--bg2); }
+    .it-dates .arrow { font-size: 11px; color: var(--muted); }
+
     /* notes */
     textarea.notes {
       width: 100%; border: 1px dashed var(--rule); border-radius: 8px;
@@ -250,6 +288,114 @@
     .q-del { opacity: 0; }
     .qrow:hover .q-del { opacity: .75; }
     .q-del:hover { opacity: 1 !important; }
+
+    /* ---- editable description ---- */
+    .card .desc {
+      border-radius: 5px; padding: 1px 4px; margin: 2px -4px 0;
+      outline: none; cursor: text; min-height: 1.55em;
+    }
+    .card .desc:hover { background: var(--bg); }
+    .card .desc:focus { background: var(--bg2); box-shadow: inset 0 0 0 1px var(--accent); }
+    .card .desc:empty::before { content: "点击添加环节说明…"; color: #A8AEB9; }
+
+    /* ---- view switch ---- */
+    .viewswitch { display: flex; gap: 8px; margin-bottom: 22px; }
+    .vs-btn {
+      font-family: var(--font); font-size: 13px; font-weight: 600;
+      padding: 8px 18px; border-radius: 10px;
+      border: 1px solid var(--rule); background: var(--bg2); color: var(--muted);
+      cursor: pointer; transition: all .15s;
+    }
+    .vs-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .vs-btn.active { color: #fff; background: var(--accent); border-color: var(--accent); }
+
+    /* ---- gantt ---- */
+    .gantt-box {
+      background: var(--bg2); border: 1px solid var(--rule); border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .gantt-legend {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 12px; color: var(--muted); margin-bottom: 12px;
+    }
+    .gantt-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .lg-dot { width: 11px; height: 11px; border-radius: 3px; border: 1px solid; }
+    .gantt-scroll {
+      overflow: auto; max-height: min(72vh, 760px);
+      border: 1px solid var(--rule); border-radius: 10px;
+    }
+    .gantt { width: max-content; min-width: 100%; }
+    .g-head {
+      display: flex; position: sticky; top: 0; z-index: 4;
+      background: var(--bg2); border-bottom: 1px solid var(--rule);
+    }
+    .g-name-head, .g-name {
+      flex: none; width: 236px; box-sizing: border-box;
+      position: sticky; left: 0; z-index: 5;
+      background: var(--bg2); border-right: 1px solid var(--rule);
+    }
+    .g-name-head {
+      padding: 7px 12px; font-size: 11.5px; font-weight: 700; color: var(--muted);
+      letter-spacing: .04em; display: flex; align-items: flex-end;
+    }
+    .g-time-head { flex: none; position: relative; }
+    .g-months { position: relative; height: 22px; border-bottom: 1px dashed var(--rule); }
+    .g-month {
+      position: absolute; top: 0; height: 22px; font-size: 10.5px; color: var(--muted);
+      padding-left: 6px; line-height: 22px; white-space: nowrap; overflow: hidden;
+      border-left: 1px solid var(--rule); box-sizing: border-box;
+    }
+    .g-days { position: relative; height: 24px; }
+    .g-day {
+      position: absolute; top: 0; height: 24px; font-size: 10px; color: var(--muted);
+      line-height: 24px; transform: translateX(-50%); font-variant-numeric: tabular-nums;
+    }
+    .g-row { display: flex; border-bottom: 1px solid color-mix(in srgb, var(--rule) 65%, transparent); }
+    .g-row:last-child { border-bottom: none; }
+    .g-row.g-card-row { background: color-mix(in srgb, var(--accent-soft) 40%, transparent); }
+    .g-name {
+      padding: 6px 12px; display: flex; align-items: center; gap: 7px;
+      font-size: 12.5px; min-height: 34px;
+    }
+    .g-row.g-item-row .g-name { padding-left: 26px; font-size: 12px; color: var(--muted); }
+    .g-name .g-no {
+      font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+      color: var(--accent); background: var(--accent-soft);
+      border-radius: 5px; padding: 0 5px; flex: none;
+    }
+    .g-name .g-txt {
+      flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .g-row.g-card-row .g-txt { font-weight: 700; color: var(--ink); }
+    .g-name .g-cnt { flex: none; font-size: 10.5px; color: var(--muted); }
+    .g-lane {
+      flex: none; position: relative; height: 34px;
+      background-image: repeating-linear-gradient(to right,
+        color-mix(in srgb, var(--rule) 70%, transparent) 0 1px, transparent 1px var(--dayW));
+    }
+    .g-bar {
+      position: absolute; top: 8px; height: 18px; border-radius: 5px;
+      border: 1px solid; box-sizing: border-box;
+      font-size: 10.5px; font-weight: 600; line-height: 16px;
+      padding: 0 5px; white-space: nowrap; overflow: hidden;
+    }
+    .g-bar.g-sum { top: 11px; height: 12px; border-radius: 4px; }
+    .g-bar .g-fill {
+      position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px;
+      background: currentColor; opacity: .22; z-index: 0;
+    }
+    .g-bar > span { position: relative; z-index: 1; }
+    .g-nodate {
+      position: absolute; left: 8px; top: 0; height: 34px; line-height: 34px;
+      font-size: 10.5px; color: #A8AEB9;
+    }
+    .g-today {
+      position: absolute; top: 0; width: 0; border-left: 2px dashed var(--c-red);
+      opacity: .55; pointer-events: none; z-index: 1;
+    }
+    .g-empty {
+      padding: 34px 16px; text-align: center; font-size: 13px; color: var(--muted);
+    }
 
     /* ============ Toolbar ============ */
     .toolbar {
@@ -304,7 +450,7 @@
     </header>
 
     <div class="tipbar">
-      <b>用法</b>：状态标签点击循环切换（未开始 → 调研中 → 开发中 → 已完成 / 已阻塞）· 点方框勾选子项 · 点文字可直接编辑（子项、标题、问题都能改）· 每张卡「＋ 添加子项」新增，子项悬停右侧 × 删除 · 问题区可增删问题 · 全部自动保存
+      <b>用法</b>：点标题 / 说明 / 子项文字即可直接编辑 · 点方框勾选完成 · 每个子项右侧小标签点一下切换自己的状态（未 / 调研 / 开发 / 完成 / 阻塞）· 点「＋期」为子项设置起止日期 · 顶部可一键切到<strong>甘特图视角</strong>按时间排布 · 全部自动保存
     </div>
 
     <div class="kpis">
@@ -316,6 +462,12 @@
       <div class="kpi k-q"><div class="n" id="kpi-q">0</div><div class="l">待明确问题</div></div>
     </div>
 
+    <div class="viewswitch">
+      <button class="vs-btn active" data-act="view" data-v="cards">卡片视角</button>
+      <button class="vs-btn" data-act="view" data-v="gantt">甘特图视角</button>
+    </div>
+
+    <div id="cardsView">
     <section>
       <div class="sec-head">
         <h2>① 主流程管线 <span class="badge">6 个环节</span></h2>
@@ -339,6 +491,19 @@
       </div>
       <div id="qList"></div>
     </section>
+    </div>
+
+    <div id="ganttView" hidden>
+      <section>
+        <div class="sec-head">
+          <h2>甘特图视角 <span class="badge">按子项排期</span></h2>
+        </div>
+        <div class="gantt-box">
+          <div class="gantt-legend" id="ganttLegend"></div>
+          <div id="ganttHost"></div>
+        </div>
+      </section>
+    </div>
 
     <footer>
       <div class="toolbar">
@@ -367,6 +532,13 @@
   };
   var QSTATUS = ['待讨论', '讨论中', '已明确', '已搁置'];
   var PRIOS = ['—', 'P0', 'P1', 'P2'];
+  var ST_STYLE = {
+    '未开始': { short: '未', fg: 'var(--c-gray)', bg: 'var(--c-gray-bg)', bd: 'var(--c-gray-bd)' },
+    '调研中': { short: '调研', fg: 'var(--c-blue)', bg: 'var(--c-blue-bg)', bd: 'var(--c-blue-bd)' },
+    '开发中': { short: '开发', fg: 'var(--c-amber)', bg: 'var(--c-amber-bg)', bd: 'var(--c-amber-bd)' },
+    '已完成': { short: '完成', fg: 'var(--c-green)', bg: 'var(--c-green-bg)', bd: 'var(--c-green-bd)' },
+    '已阻塞': { short: '阻塞', fg: 'var(--c-red)', bg: 'var(--c-red-bg)', bd: 'var(--c-red-bd)' }
+  };
 
   var DEFAULTS = {
     version: 1,
@@ -453,15 +625,33 @@
   var state = load();
 
   /* ---------- persistence ---------- */
+  function normalize(s) {
+    ['main', 'support'].forEach(function (k) {
+      if (!Array.isArray(s[k])) s[k] = [];
+      s[k].forEach(function (m) {
+        if (typeof m.desc !== 'string') m.desc = '';
+        if (typeof m.notes !== 'string') m.notes = '';
+        if (!Array.isArray(m.items)) m.items = [];
+        m.items.forEach(function (it) {
+          if (typeof it.done !== 'boolean') it.done = false;
+          if (!it.status || STATUS.indexOf(it.status) < 0) it.status = it.done ? '已完成' : '未开始';
+          if (typeof it.start !== 'string') it.start = '';
+          if (typeof it.end !== 'string') it.end = '';
+        });
+      });
+    });
+    if (!Array.isArray(s.questions)) s.questions = [];
+    return s;
+  }
   function load() {
     try {
       var raw = localStorage.getItem(KEY);
       if (raw) {
         var s = JSON.parse(raw);
-        if (s && s.version === 1 && Array.isArray(s.main)) return s;
+        if (s && s.version === 1 && Array.isArray(s.main)) return normalize(s);
       }
     } catch (e) { /* ignore */ }
-    return JSON.parse(JSON.stringify(DEFAULTS));
+    return normalize(JSON.parse(JSON.stringify(DEFAULTS)));
   }
   function save() {
     try {
@@ -483,6 +673,20 @@
   function findCard(sec, id) {
     for (var i = 0; i < state[sec].length; i++) if (state[sec][i].id === id) return state[sec][i];
     return null;
+  }
+  function parseD(s) {
+    if (!s) return null;
+    var p = String(s).split('-');
+    if (p.length !== 3) return null;
+    var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  function dayNum(d) { return Math.round(d.getTime() / 86400000); }
+  function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+  function fmtShort(s) {
+    if (!s) return '';
+    var p = String(s).split('-');
+    return p.length === 3 ? (p[1] + '/' + p[2]) : s;
   }
   function focusItem(cardId, idx) {
     var cards = document.querySelectorAll('.card[data-id="' + cardId + '"]');
@@ -506,11 +710,24 @@
     var done = 0;
     m.items.forEach(function (it) { if (it.done) done++; });
     var itemsHtml = m.items.map(function (it, i) {
-      return '<li class="' + (it.done ? 'done' : '') + '">' +
-        '<span class="chk" data-act="item" data-i="' + i + '" title="点击勾选 / 取消">✓</span>' +
-        '<span class="it-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
-        '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
-        '</li>';
+      var st = ST_STYLE[it.status] || ST_STYLE['未开始'];
+      var dateTitle = it.start
+        ? ('排期 ' + it.start + ' → ' + (it.end || it.start))
+        : '点击设置起止日期';
+      return '<li class="item-li' + (it.done ? ' done' : '') + '">' +
+        '<div class="it-row">' +
+          '<span class="chk" data-act="item" data-i="' + i + '" title="点击勾选 / 取消">✓</span>' +
+          '<span class="it-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
+          '<button class="it-st" data-act="item-status" data-i="' + i + '" style="color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '" title="点击切换状态">' + st.short + '</button>' +
+          '<button class="it-date' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
+          '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
+        '</div>' +
+        '<div class="it-dates">' +
+          '<input type="date" data-act="d-start" data-i="' + i + '" value="' + esc(it.start) + '">' +
+          '<span class="arrow">→</span>' +
+          '<input type="date" data-act="d-end" data-i="' + i + '" value="' + esc(it.end) + '">' +
+        '</div>' +
+      '</li>';
     }).join('');
     var prioHtml = m.prio !== undefined
       ? '<span class="prio-tag">优先级 <button class="pill ' + (m.prio === 'P0' ? 'c-red' : m.prio === 'P1' ? 'c-amber' : m.prio === 'P2' ? 'c-blue' : 'c-gray') + '" data-act="prio" title="点击调整优先级" style="margin-top:0;padding:2px 9px;">' + esc(m.prio || '—') + '</button></span>'
@@ -521,7 +738,7 @@
         '<span class="stage-no">' + esc(m.no || '★') + '</span>' +
         '<div class="card-title-wrap">' +
           '<h3 contenteditable="true" spellcheck="false" data-act="title" title="点击可重命名">' + esc(m.title) + '</h3>' +
-          '<p class="desc">' + esc(m.desc) + '</p>' +
+          '<p class="desc" contenteditable="true" spellcheck="false" data-act="desc" title="点击可编辑说明">' + esc(m.desc) + '</p>' +
         '</div>' +
         pillHtml(m.status, 'status') +
       '</div>' +
@@ -552,6 +769,140 @@
     document.getElementById('supportGrid').innerHTML = state.support.map(cardHtml).join('');
     document.getElementById('qList').innerHTML = state.questions.map(qHtml).join('');
     renderKPIs();
+    if (!document.getElementById('ganttView').hidden) renderGantt();
+  }
+
+  /* ---------- gantt ---------- */
+  function itemRange(m) {
+    var a = null, b = null;
+    m.items.forEach(function (it) {
+      var s = parseD(it.start), e = parseD(it.end) || parseD(it.start);
+      if (!s) return;
+      if (!a || dayNum(s) < dayNum(a)) a = s;
+      if (!b || dayNum(e) > dayNum(b)) b = e;
+    });
+    return a && b ? { a: a, b: b } : null;
+  }
+
+  function renderGantt() {
+    var host = document.getElementById('ganttHost');
+    var legend = document.getElementById('ganttLegend');
+    legend.innerHTML = STATUS.map(function (s) {
+      var st = ST_STYLE[s];
+      return '<span><i class="lg-dot" style="background:' + st.bg + ';border-color:' + st.bd + '"></i>' + s + '</span>';
+    }).join('') + '<span><i class="lg-dot" style="background:var(--accent-soft);border-color:#C9C9F5"></i>环节汇总</span>';
+
+    var all = state.main.concat(state.support);
+    var dates = [];
+    all.forEach(function (m) {
+      m.items.forEach(function (it) {
+        var s = parseD(it.start), e = parseD(it.end) || parseD(it.start);
+        if (s) dates.push(s);
+        if (e) dates.push(e);
+      });
+    });
+
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var minD, maxD;
+    if (dates.length) {
+      minD = new Date(Math.min.apply(null, dates.map(function (d) { return d.getTime(); })));
+      maxD = new Date(Math.max.apply(null, dates.map(function (d) { return d.getTime(); })));
+    } else {
+      minD = new Date(today.getTime());
+      maxD = addDays(today, 30);
+    }
+    minD = addDays(minD, -2);
+    maxD = addDays(maxD, 2);
+    if (dayNum(maxD) - dayNum(minD) < 20) maxD = addDays(minD, 20);
+
+    var days = dayNum(maxD) - dayNum(minD) + 1;
+    var dayW = days > 150 ? 7 : days > 100 ? 9 : days > 65 ? 12 : days > 40 ? 16 : days > 22 ? 20 : 26;
+    var total = days * dayW;
+
+    /* month band */
+    var months = '';
+    var cur = new Date(minD.getTime());
+    while (cur <= maxD) {
+      var y = cur.getFullYear(), mo = cur.getMonth();
+      var next = new Date(y, mo + 1, 1);
+      var segEnd = next > maxD ? addDays(maxD, 1) : next;
+      var left = (dayNum(cur) - dayNum(minD)) * dayW;
+      var w = (dayNum(segEnd) - dayNum(cur)) * dayW;
+      months += '<div class="g-month" style="left:' + left + 'px;width:' + w + 'px">' + y + '/' + (mo + 1) + '</div>';
+      cur = next;
+    }
+
+    /* day ticks */
+    var step = dayW >= 20 ? 1 : dayW >= 12 ? 7 : 14;
+    var dayTicks = '';
+    for (var i = 0; i < days; i += step) {
+      var dd = addDays(minD, i);
+      dayTicks += '<div class="g-day" style="left:' + (i * dayW + dayW / 2) + 'px">' + dd.getDate() + '</div>';
+    }
+
+    var todayIn = dayNum(today) >= dayNum(minD) && dayNum(today) <= dayNum(maxD);
+    var todayX = (dayNum(today) - dayNum(minD)) * dayW;
+    var todayLine = todayIn ? '<div class="g-today" style="left:' + todayX + 'px;top:0;bottom:0"></div>' : '';
+
+    var rows = '';
+    all.forEach(function (m) {
+      var doneN = 0;
+      m.items.forEach(function (it) { if (it.done || it.status === '已完成') doneN++; });
+      var rg = itemRange(m);
+
+      rows += '<div class="g-row g-card-row">' +
+        '<div class="g-name">' +
+          '<span class="g-no">' + esc(m.no || '★') + '</span>' +
+          '<span class="g-txt" title="' + esc(m.title) + '">' + esc(m.title) + '</span>' +
+          '<span class="g-cnt">' + doneN + '/' + m.items.length + '</span>' +
+        '</div>' +
+        '<div class="g-lane" style="width:' + total + 'px">' + todayLine +
+          (rg
+            ? '<div class="g-bar g-sum" style="left:' + ((dayNum(rg.a) - dayNum(minD)) * dayW) + 'px;width:' + Math.max(dayW, (dayNum(rg.b) - dayNum(rg.a) + 1) * dayW) + 'px;color:var(--accent);background:var(--accent-soft);border-color:#C9C9F5">' +
+              '<i class="g-fill" style="width:' + (m.items.length ? Math.round(doneN / m.items.length * 100) : 0) + '%"></i>' +
+              '</div>'
+            : '') +
+        '</div>' +
+      '</div>';
+
+      m.items.forEach(function (it) {
+        var s = parseD(it.start), e = parseD(it.end) || parseD(it.start);
+        var st = ST_STYLE[it.status] || ST_STYLE['未开始'];
+        var bar = '';
+        if (s && e) {
+          var lft = (dayNum(s) - dayNum(minD)) * dayW;
+          var wid = Math.max(dayW, (dayNum(e) - dayNum(s) + 1) * dayW);
+          var label = wid > 62 ? fmtShort(it.start) : '';
+          bar = '<div class="g-bar" title="' + esc(it.t) + ' · ' + esc(it.start) + ' → ' + esc(it.end || it.start) + '" ' +
+            'style="left:' + lft + 'px;width:' + wid + 'px;color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '">' +
+            '<span>' + label + '</span></div>';
+        }
+        rows += '<div class="g-row g-item-row">' +
+          '<div class="g-name">' +
+            '<i class="lg-dot" style="flex:none;width:9px;height:9px;background:' + st.bg + ';border-color:' + st.bd + '"></i>' +
+            '<span class="g-txt" title="' + esc(it.t) + '">' + esc(it.t) + '</span>' +
+          '</div>' +
+          '<div class="g-lane" style="width:' + total + 'px">' + todayLine +
+            bar +
+            (s ? '' : '<span class="g-nodate">未排期</span>') +
+          '</div>' +
+        '</div>';
+      });
+    });
+
+    host.innerHTML = '<div class="gantt-scroll" id="ganttScroll"><div class="gantt" style="--dayW:' + dayW + 'px">' +
+      '<div class="g-head">' +
+        '<div class="g-name-head">模块 / 子项</div>' +
+        '<div class="g-time-head" style="width:' + total + 'px">' +
+          '<div class="g-months">' + months + '</div>' +
+          '<div class="g-days">' + dayTicks + '</div>' +
+        '</div>' +
+      '</div>' + rows + '</div></div>';
+
+    if (todayIn) {
+      var sc = document.getElementById('ganttScroll');
+      sc.scrollLeft = Math.max(0, todayX - 120);
+    }
   }
 
   function renderKPIs() {
@@ -611,9 +962,41 @@
         m = findCard(sec, card.getAttribute('data-id'));
         if (!m) return;
         idx = parseInt(btn.getAttribute('data-i'), 10);
-        if (m.items[idx]) m.items[idx].done = !m.items[idx].done;
+        if (m.items[idx]) {
+          m.items[idx].done = !m.items[idx].done;
+          m.items[idx].status = m.items[idx].done ? '已完成' : '未开始';
+        }
         save(); render();
         break;
+
+      case 'item-status':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        if (!m.items[idx]) return;
+        m.items[idx].status = STATUS[(STATUS.indexOf(m.items[idx].status) + 1) % STATUS.length];
+        m.items[idx].done = m.items[idx].status === '已完成';
+        save(); render();
+        break;
+
+      case 'item-date': {
+        var li = btn.closest('.item-li');
+        if (li) li.classList.toggle('open');
+        break;
+      }
+
+      case 'view': {
+        var v = btn.getAttribute('data-v');
+        Array.prototype.forEach.call(document.querySelectorAll('.vs-btn'), function (b) {
+          b.classList.toggle('active', b.getAttribute('data-v') === v);
+        });
+        document.getElementById('cardsView').hidden = (v !== 'cards');
+        document.getElementById('ganttView').hidden = (v !== 'gantt');
+        if (v === 'gantt') renderGantt();
+        break;
+      }
 
       case 'prio':
         if (!card) return;
@@ -629,7 +1012,7 @@
         sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
         m = findCard(sec, card.getAttribute('data-id'));
         if (!m) return;
-        m.items.push({ t: '新子项（点击文字可编辑）', done: false });
+        m.items.push({ t: '新子项（点击文字可编辑）', done: false, status: '未开始', start: '', end: '' });
         save(); render();
         focusItem(card.getAttribute('data-id'), m.items.length - 1);
         break;
@@ -716,6 +1099,36 @@
     }
   });
 
+  /* date inputs — update chip in place to keep the editor open */
+  document.addEventListener('change', function (e) {
+    var el = e.target;
+    if (!(el instanceof HTMLInputElement)) return;
+    var act = el.getAttribute('data-act');
+    if (act !== 'd-start' && act !== 'd-end') return;
+    var card = el.closest('.card');
+    if (!card) return;
+    var sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+    var m = findCard(sec, card.getAttribute('data-id'));
+    if (!m) return;
+    var i = parseInt(el.getAttribute('data-i'), 10);
+    if (!m.items[i]) return;
+    if (act === 'd-start') m.items[i].start = el.value; else m.items[i].end = el.value;
+    if (m.items[i].start && m.items[i].end && m.items[i].end < m.items[i].start) {
+      m.items[i].end = m.items[i].start;
+      var endEl = card.querySelector('.it-dates input[data-act="d-end"][data-i="' + i + '"]');
+      if (endEl) endEl.value = m.items[i].end;
+    }
+    var it = m.items[i];
+    var chip = card.querySelector('.it-date[data-i="' + i + '"]');
+    if (chip) {
+      chip.textContent = it.start ? fmtShort(it.start) : '＋期';
+      chip.classList.toggle('has', !!it.start);
+      chip.title = it.start ? ('排期 ' + it.start + ' → ' + (it.end || it.start)) : '点击设置起止日期';
+    }
+    save();
+    if (!document.getElementById('ganttView').hidden) renderGantt();
+  });
+
   /* notes / answer input — save without re-render to keep focus */
   document.addEventListener('input', function (e) {
     var ta = e.target;
@@ -744,6 +1157,16 @@
       for (i = 0; i < state.main.length; i++) if (state.main[i].id === id) { state.main[i].title = t; break; }
       for (i = 0; i < state.support.length; i++) if (state.support[i].id === id) { state.support[i].title = t; break; }
       h.textContent = t;
+      save();
+      return;
+    }
+
+    if (act === 'desc') {
+      var dsec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+      var dm = findCard(dsec, id);
+      if (!dm) return;
+      dm.desc = h.textContent.trim().replace(/\s+/g, ' ');
+      h.textContent = dm.desc;
       save();
       return;
     }
