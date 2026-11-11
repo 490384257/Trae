@@ -176,7 +176,30 @@
     }
     li.done .chk { background: var(--accent); border-color: var(--accent); color: #fff; }
     li.done .it-t { color: var(--muted); text-decoration: line-through; }
-    .it-t { line-height: 1.5; }
+    .it-t {
+      flex: 1; min-width: 0; line-height: 1.5;
+      border-radius: 4px; padding: 0 3px; margin: 0 -3px;
+      outline: none; word-break: break-word;
+    }
+    .it-t:hover { background: var(--accent-soft); }
+    .it-t:focus { background: var(--bg2); box-shadow: inset 0 0 0 1px var(--accent); }
+    .chk { cursor: pointer; }
+    .chk:hover { border-color: var(--accent); }
+    .item-del {
+      flex: none; width: 20px; height: 20px; margin-top: 1px;
+      border: none; border-radius: 6px; background: none;
+      color: var(--muted); font-size: 15px; line-height: 1; cursor: pointer;
+      opacity: 0; transition: opacity .12s, background .12s, color .12s;
+    }
+    ul.items li:hover .item-del { opacity: .8; }
+    .item-del:hover { opacity: 1; background: var(--c-red-bg); color: var(--c-red); }
+    .add-item {
+      font-family: var(--font); font-size: 12px; font-weight: 600;
+      color: var(--accent); background: none; border: none;
+      text-align: left; padding: 4px 8px; border-radius: 7px; cursor: pointer;
+      align-self: flex-start; transition: background .12s;
+    }
+    .add-item:hover { background: var(--accent-soft); }
 
     /* notes */
     textarea.notes {
@@ -216,6 +239,18 @@
     .qrow h3 { font-size: 15px; font-weight: 700; }
     .qrow .hint { font-size: 12.5px; color: var(--muted); margin: 4px 0 8px; line-height: 1.65; }
 
+    /* question editable zones */
+    .qrow h3, .qrow .hint {
+      border-radius: 5px; padding: 1px 4px; margin-left: -4px; margin-right: -4px;
+      outline: none; cursor: text;
+    }
+    .qrow h3:hover, .qrow .hint:hover { background: var(--bg); }
+    .qrow h3:focus, .qrow .hint:focus { background: var(--bg2); box-shadow: inset 0 0 0 1px var(--accent); }
+    .q-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+    .q-del { opacity: 0; }
+    .qrow:hover .q-del { opacity: .75; }
+    .q-del:hover { opacity: 1 !important; }
+
     /* ============ Toolbar ============ */
     .toolbar {
       display: flex; justify-content: center; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -242,9 +277,11 @@
       .qrow { grid-template-columns: 1fr; }
       .q-no { width: fit-content; padding: 4px 12px; }
       .masthead { padding-top: 22px; }
+      .item-del, .q-del { opacity: .55; }
+      .q-actions { flex-direction: row; align-items: center; justify-content: flex-end; }
     }
     @media print {
-      .toolbar, .add-btn, .del-btn { display: none; }
+      .toolbar, .add-btn, .del-btn, .item-del, .add-item { display: none; }
       .card, .qrow { break-inside: avoid; box-shadow: none; }
       body { background: #fff; }
     }
@@ -267,7 +304,7 @@
     </header>
 
     <div class="tipbar">
-      <b>用法</b>：状态标签点击循环切换（未开始 → 调研中 → 开发中 → 已完成 / 已阻塞）· 点击子项行勾选完成 · 标题悬停后点击可直接重命名 · 支撑卡片可调整优先级 P0/P1/P2
+      <b>用法</b>：状态标签点击循环切换（未开始 → 调研中 → 开发中 → 已完成 / 已阻塞）· 点方框勾选子项 · 点文字可直接编辑（子项、标题、问题都能改）· 每张卡「＋ 添加子项」新增，子项悬停右侧 × 删除 · 问题区可增删问题 · 全部自动保存
     </div>
 
     <div class="kpis">
@@ -298,6 +335,7 @@
     <section>
       <div class="sec-head">
         <h2>③ 待确认关键问题 <span class="badge" id="qBadge">4 个</span></h2>
+        <button class="add-btn" data-act="add-q">＋ 添加问题</button>
       </div>
       <div id="qList"></div>
     </section>
@@ -446,6 +484,18 @@
     for (var i = 0; i < state[sec].length; i++) if (state[sec][i].id === id) return state[sec][i];
     return null;
   }
+  function focusItem(cardId, idx) {
+    var cards = document.querySelectorAll('.card[data-id="' + cardId + '"]');
+    if (!cards.length) return;
+    var t = cards[0].querySelector('.it-t[data-i="' + idx + '"]');
+    if (!t) return;
+    t.focus();
+    var r = document.createRange();
+    r.selectNodeContents(t);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+  }
 
   /* ---------- render ---------- */
   function pillHtml(label, act) {
@@ -456,8 +506,11 @@
     var done = 0;
     m.items.forEach(function (it) { if (it.done) done++; });
     var itemsHtml = m.items.map(function (it, i) {
-      return '<li class="' + (it.done ? 'done' : '') + '" data-act="item" data-i="' + i + '" title="点击勾选/取消">' +
-        '<span class="chk">✓</span><span class="it-t">' + esc(it.t) + '</span></li>';
+      return '<li class="' + (it.done ? 'done' : '') + '">' +
+        '<span class="chk" data-act="item" data-i="' + i + '" title="点击勾选 / 取消">✓</span>' +
+        '<span class="it-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
+        '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
+        '</li>';
     }).join('');
     var prioHtml = m.prio !== undefined
       ? '<span class="prio-tag">优先级 <button class="pill ' + (m.prio === 'P0' ? 'c-red' : m.prio === 'P1' ? 'c-amber' : m.prio === 'P2' ? 'c-blue' : 'c-gray') + '" data-act="prio" title="点击调整优先级" style="margin-top:0;padding:2px 9px;">' + esc(m.prio || '—') + '</button></span>'
@@ -473,20 +526,24 @@
         pillHtml(m.status, 'status') +
       '</div>' +
       '<ul class="items">' + itemsHtml + '</ul>' +
+      '<button class="add-item" data-act="add-item" title="新增子项">＋ 添加子项</button>' +
       '<textarea class="notes" rows="2" placeholder="备注：卡点、结论、下一步…">' + esc(m.notes) + '</textarea>' +
       '<div class="card-foot"><span class="mini">子项 ' + done + '/' + m.items.length + prioHtml + '</span>' + delHtml + '</div>' +
     '</article>';
   }
 
-  function qHtml(q) {
+  function qHtml(q, i) {
     return '<article class="qrow" data-id="' + esc(q.id) + '">' +
-      '<div class="q-no">' + esc(q.id.toUpperCase()) + '</div>' +
+      '<div class="q-no">Q' + (i + 1) + '</div>' +
       '<div class="q-body">' +
-        '<h3>' + esc(q.title) + '</h3>' +
-        '<p class="hint">' + esc(q.hint) + '</p>' +
+        '<h3 contenteditable="true" spellcheck="false" data-act="qtitle" title="点击可编辑">' + esc(q.title) + '</h3>' +
+        '<p class="hint" contenteditable="true" spellcheck="false" data-act="qhint" title="点击可编辑">' + esc(q.hint) + '</p>' +
         '<textarea class="notes" rows="2" placeholder="结论 / 记录：讨论结果、决策、时间…">' + esc(q.answer) + '</textarea>' +
       '</div>' +
-      pillHtml(q.status, 'qstatus') +
+      '<div class="q-actions">' +
+        pillHtml(q.status, 'qstatus') +
+        '<button class="del-btn q-del" data-act="qdel" title="删除此问题">删除</button>' +
+      '</div>' +
     '</article>';
   }
 
@@ -567,6 +624,50 @@
         save(); render();
         break;
 
+      case 'add-item':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        m.items.push({ t: '新子项（点击文字可编辑）', done: false });
+        save(); render();
+        focusItem(card.getAttribute('data-id'), m.items.length - 1);
+        break;
+
+      case 'item-del':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        if (!m.items[idx]) return;
+        if (!confirm('删除子项「' + m.items[idx].t + '」？')) return;
+        m.items.splice(idx, 1);
+        save(); render();
+        break;
+
+      case 'add-q': {
+        state.questions.push({
+          id: 'q' + Date.now(),
+          title: '新问题（点击文字可编辑）',
+          hint: '点击此处填写问题描述…',
+          status: '待讨论',
+          answer: ''
+        });
+        save(); render();
+        break;
+      }
+
+      case 'qdel':
+        if (!card) return;
+        var target = null;
+        state.questions.forEach(function (x) { if (x.id === card.getAttribute('data-id')) target = x; });
+        if (!target) return;
+        if (!confirm('删除问题「' + target.title + '」？此操作不可撤销。')) return;
+        state.questions = state.questions.filter(function (x) { return x.id !== target.id; });
+        save(); render();
+        break;
+
       case 'del':
         if (!card) return;
         sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
@@ -631,19 +732,52 @@
   /* title inline rename */
   document.addEventListener('focusout', function (e) {
     var h = e.target;
-    if (!(h instanceof HTMLElement) || h.getAttribute('data-act') !== 'title') return;
+    if (!(h instanceof HTMLElement)) return;
+    var act = h.getAttribute('data-act');
     var card = h.closest('[data-id]');
     if (!card) return;
     var id = card.getAttribute('data-id');
-    var t = h.textContent.trim().replace(/\s+/g, ' ') || '未命名模块';
     var i;
-    for (i = 0; i < state.main.length; i++) if (state.main[i].id === id) { state.main[i].title = t; break; }
-    for (i = 0; i < state.support.length; i++) if (state.support[i].id === id) { state.support[i].title = t; break; }
-    h.textContent = t;
-    save();
+
+    if (act === 'title') {
+      var t = h.textContent.trim().replace(/\s+/g, ' ') || '未命名模块';
+      for (i = 0; i < state.main.length; i++) if (state.main[i].id === id) { state.main[i].title = t; break; }
+      for (i = 0; i < state.support.length; i++) if (state.support[i].id === id) { state.support[i].title = t; break; }
+      h.textContent = t;
+      save();
+      return;
+    }
+
+    if (act === 'item-t') {
+      var sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+      var m = findCard(sec, id);
+      if (!m) return;
+      var idx = parseInt(h.getAttribute('data-i'), 10);
+      if (!m.items[idx]) return;
+      var txt = h.textContent.trim().replace(/\s+/g, ' ');
+      if (!txt) { h.textContent = m.items[idx].t; return; }
+      m.items[idx].t = txt;
+      h.textContent = txt;
+      save();
+      return;
+    }
+
+    if (act === 'qtitle' || act === 'qhint') {
+      var q = null;
+      for (i = 0; i < state.questions.length; i++) if (state.questions[i].id === id) q = state.questions[i];
+      if (!q) return;
+      var v = h.textContent.trim().replace(/\s+/g, ' ');
+      if (!v) { h.textContent = act === 'qtitle' ? q.title : q.hint; return; }
+      if (act === 'qtitle') q.title = v; else q.hint = v;
+      h.textContent = v;
+      save();
+      return;
+    }
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && e.target instanceof HTMLElement && e.target.getAttribute('data-act') === 'title') {
+    if (e.key !== 'Enter' || !(e.target instanceof HTMLElement)) return;
+    var act = e.target.getAttribute('data-act');
+    if (act === 'title' || act === 'item-t' || act === 'qtitle') {
       e.preventDefault();
       e.target.blur();
     }
