@@ -27,6 +27,7 @@
       --c-amber: #B45309;  --c-amber-bg: #FDF3E3;  --c-amber-bd: #F3D9A9;
       --c-green: #047857;  --c-green-bg: #E5F6EF;  --c-green-bd: #A9E2CC;
       --c-red: #DC2626;    --c-red-bg: #FDEAEA;    --c-red-bd: #F5B9B9;
+      --c-purple: #6D28D9; --c-purple-bg: #F1EBFD; --c-purple-bd: #D8CBF8;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -159,6 +160,7 @@
     .pill.c-amber{ color: var(--c-amber);background: var(--c-amber-bg);border-color: var(--c-amber-bd);}
     .pill.c-green{ color: var(--c-green);background: var(--c-green-bg);border-color: var(--c-green-bd);}
     .pill.c-red  { color: var(--c-red);  background: var(--c-red-bg);  border-color: var(--c-red-bd);  }
+    .pill.c-purple{ color: var(--c-purple);background: var(--c-purple-bg);border-color: var(--c-purple-bd);}
 
     /* sub items */
     ul.items { list-style: none; display: flex; flex-direction: column; gap: 2px; }
@@ -175,7 +177,7 @@
       transition: background .12s, border-color .12s;
     }
     li.done .chk { background: var(--accent); border-color: var(--accent); color: #fff; }
-    li.done .it-t { color: var(--muted); text-decoration: line-through; }
+    li.done .it-t { color: var(--muted); }
     .it-t {
       flex: 1; min-width: 0; line-height: 1.5;
       border-radius: 4px; padding: 0 3px; margin: 0 -3px;
@@ -230,7 +232,7 @@
       display: none; gap: 6px; align-items: center; flex-wrap: wrap;
       padding: 2px 8px 6px 26px;
     }
-    .item-li.open .it-dates { display: flex; }
+    .open > .it-dates { display: flex; }
     .it-dates input[type="date"] {
       font-family: var(--font); font-size: 11.5px; color: var(--ink);
       background: var(--bg); border: 1px solid var(--rule); border-radius: 6px;
@@ -238,6 +240,19 @@
     }
     .it-dates input[type="date"]:focus { outline: none; border-color: var(--accent); background: var(--bg2); }
     .it-dates .arrow { font-size: 11px; color: var(--muted); }
+
+    /* ---- branches under sub-items ---- */
+    ul.branches {
+      list-style: none; margin: 0 0 3px 20px; padding-left: 10px;
+      border-left: 2px solid var(--rule); display: flex; flex-direction: column; gap: 1px;
+    }
+    .br-row { padding: 3px 6px 3px 8px; }
+    .br-row .it-t { font-size: 12px; }
+    .br-row .chk { width: 14px; height: 14px; font-size: 10px; margin-top: 3px; }
+    .br-row .it-st { font-size: 10px; padding: 1px 5px; }
+    .br-row .it-date { font-size: 10px; }
+    .add-branch { font-size: 11px; padding: 3px 8px; margin-left: 20px; color: var(--accent2); }
+    .add-branch:hover { background: var(--accent-soft); }
 
     /* notes */
     textarea.notes {
@@ -358,6 +373,9 @@
       font-size: 12.5px; min-height: 34px;
     }
     .g-row.g-item-row .g-name { padding-left: 26px; font-size: 12px; color: var(--muted); }
+    .g-row.g-branch-row .g-name { padding-left: 42px; font-size: 11.5px; color: var(--muted); }
+    .g-row.g-branch-row .g-lane { height: 30px; }
+    .g-row.g-branch-row .g-bar { top: 6px; height: 16px; }
     .g-name .g-no {
       font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
       color: var(--accent); background: var(--accent-soft);
@@ -450,13 +468,13 @@
     </header>
 
     <div class="tipbar">
-      <b>用法</b>：点标题 / 说明 / 子项文字即可直接编辑 · 点方框勾选完成 · 每个子项右侧小标签点一下切换自己的状态（未 / 调研 / 开发 / 完成 / 阻塞）· 点「＋期」为子项设置起止日期 · 顶部可一键切到<strong>甘特图视角</strong>按时间排布 · 全部自动保存
+      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务，分支同样有状态和排期 · 状态点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 点「＋期」设起止日期 · 顶部可切<strong>甘特图视角</strong>
     </div>
 
     <div class="kpis">
       <div class="kpi k-total"><div class="n" id="kpi-total">0</div><div class="l">技术模块</div></div>
       <div class="kpi k-done"><div class="n" id="kpi-done">0</div><div class="l">已完成</div></div>
-      <div class="kpi k-doing"><div class="n" id="kpi-doing">0</div><div class="l">进行中（调研+开发）</div></div>
+      <div class="kpi k-doing"><div class="n" id="kpi-doing">0</div><div class="l">进行中（调研/开发/优化）</div></div>
       <div class="kpi k-todo"><div class="n" id="kpi-todo">0</div><div class="l">未开始</div></div>
       <div class="kpi k-block"><div class="n" id="kpi-block">0</div><div class="l">已阻塞</div></div>
       <div class="kpi k-q"><div class="n" id="kpi-q">0</div><div class="l">待明确问题</div></div>
@@ -523,11 +541,11 @@
   'use strict';
 
   var KEY = 'geo-kanban-v1';
-  var STATUS = ['未开始', '调研中', '开发中', '已完成', '已阻塞'];
-  var WEIGHT = { '未开始': 0, '调研中': 0.25, '开发中': 0.5, '已完成': 1, '已阻塞': 0 };
+  var STATUS = ['未开始', '调研中', '开发中', '优化中', '已完成', '已阻塞'];
+  var WEIGHT = { '未开始': 0, '调研中': 0.25, '开发中': 0.5, '优化中': 0.75, '已完成': 1, '已阻塞': 0 };
   var COLOR = {
     '未开始': 'c-gray', '调研中': 'c-blue', '开发中': 'c-amber',
-    '已完成': 'c-green', '已阻塞': 'c-red',
+    '已完成': 'c-green', '已阻塞': 'c-red', '优化中': 'c-purple',
     '待讨论': 'c-gray', '讨论中': 'c-amber', '已明确': 'c-green', '已搁置': 'c-gray'
   };
   var QSTATUS = ['待讨论', '讨论中', '已明确', '已搁置'];
@@ -536,6 +554,7 @@
     '未开始': { short: '未', fg: 'var(--c-gray)', bg: 'var(--c-gray-bg)', bd: 'var(--c-gray-bd)' },
     '调研中': { short: '调研', fg: 'var(--c-blue)', bg: 'var(--c-blue-bg)', bd: 'var(--c-blue-bd)' },
     '开发中': { short: '开发', fg: 'var(--c-amber)', bg: 'var(--c-amber-bg)', bd: 'var(--c-amber-bd)' },
+    '优化中': { short: '优化', fg: 'var(--c-purple)', bg: 'var(--c-purple-bg)', bd: 'var(--c-purple-bd)' },
     '已完成': { short: '完成', fg: 'var(--c-green)', bg: 'var(--c-green-bg)', bd: 'var(--c-green-bd)' },
     '已阻塞': { short: '阻塞', fg: 'var(--c-red)', bg: 'var(--c-red-bg)', bd: 'var(--c-red-bd)' }
   };
@@ -637,6 +656,14 @@
           if (!it.status || STATUS.indexOf(it.status) < 0) it.status = it.done ? '已完成' : '未开始';
           if (typeof it.start !== 'string') it.start = '';
           if (typeof it.end !== 'string') it.end = '';
+          if (!Array.isArray(it.children)) it.children = [];
+          it.children.forEach(function (br) {
+            if (typeof br.t !== 'string' || !br.t) br.t = '分支';
+            if (typeof br.done !== 'boolean') br.done = false;
+            if (!br.status || STATUS.indexOf(br.status) < 0) br.status = br.done ? '已完成' : '未开始';
+            if (typeof br.start !== 'string') br.start = '';
+            if (typeof br.end !== 'string') br.end = '';
+          });
         });
       });
     });
@@ -688,10 +715,9 @@
     var p = String(s).split('-');
     return p.length === 3 ? (p[1] + '/' + p[2]) : s;
   }
-  function focusItem(cardId, idx) {
-    var cards = document.querySelectorAll('.card[data-id="' + cardId + '"]');
-    if (!cards.length) return;
-    var t = cards[0].querySelector('.it-t[data-i="' + idx + '"]');
+  function focusEl(cardId, sel) {
+    var c = document.querySelector('.card[data-id="' + cardId + '"]');
+    var t = c && c.querySelector(sel);
     if (!t) return;
     t.focus();
     var r = document.createRange();
@@ -700,6 +726,27 @@
     s.removeAllRanges();
     s.addRange(r);
   }
+  function qById(id) {
+    for (var i = 0; i < state.questions.length; i++) if (state.questions[i].id === id) return state.questions[i];
+    return null;
+  }
+  function locateEditable(el) {
+    var act = el.getAttribute('data-act');
+    var card = el.closest('[data-id]');
+    if (!act || !card) return null;
+    var id = card.getAttribute('data-id');
+    var sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+    var gi = function (n) { var v = el.getAttribute(n); return v === null ? null : parseInt(v, 10); };
+    var i = gi('data-i'), b = gi('data-b');
+    var obj = null, field = null;
+    if (act === 'title') { obj = findCard(sec, id); field = 'title'; }
+    else if (act === 'desc') { obj = findCard(sec, id); field = 'desc'; }
+    else if (act === 'item-t') { var m = findCard(sec, id); obj = m && m.items[i]; field = 't'; }
+    else if (act === 'branch-t') { var m2 = findCard(sec, id); var it = m2 && m2.items[i]; obj = it && it.children && it.children[b]; field = 't'; }
+    else if (act === 'qtitle') { obj = qById(id); field = 'title'; }
+    else if (act === 'qhint') { obj = qById(id); field = 'hint'; }
+    return obj && field ? { obj: obj, field: field, act: act } : null;
+  }
 
   /* ---------- render ---------- */
   function pillHtml(label, act) {
@@ -707,19 +754,40 @@
   }
 
   function cardHtml(m) {
-    var done = 0;
-    m.items.forEach(function (it) { if (it.done) done++; });
+    var done = 0, brDone = 0, brTotal = 0;
+    m.items.forEach(function (it) {
+      if (it.done) done++;
+      (it.children || []).forEach(function (br) { brTotal++; if (br.done) brDone++; });
+    });
     var itemsHtml = m.items.map(function (it, i) {
       var st = ST_STYLE[it.status] || ST_STYLE['未开始'];
       var dateTitle = it.start
         ? ('排期 ' + it.start + ' → ' + (it.end || it.start))
         : '点击设置起止日期';
+      var branchesHtml = (it.children || []).map(function (br, bi) {
+        var bst = ST_STYLE[br.status] || ST_STYLE['未开始'];
+        var bdt = br.start ? ('排期 ' + br.start + ' → ' + (br.end || br.start)) : '点击设置起止日期';
+        return '<li class="br-li' + (br.done ? ' done' : '') + '">' +
+          '<div class="it-row br-row">' +
+            '<span class="chk" data-act="branch-check" data-i="' + i + '" data-b="' + bi + '" title="点击勾选 / 取消">✓</span>' +
+            '<span class="it-t br-t" contenteditable="true" spellcheck="false" data-act="branch-t" data-i="' + i + '" data-b="' + bi + '" title="点击可编辑">' + esc(br.t) + '</span>' +
+            '<button class="it-st" data-act="branch-status" data-i="' + i + '" data-b="' + bi + '" style="color:' + bst.fg + ';background:' + bst.bg + ';border-color:' + bst.bd + '" title="点击切换状态">' + bst.short + '</button>' +
+            '<button class="it-date br-date' + (br.start ? ' has' : '') + '" data-act="branch-date" data-i="' + i + '" data-b="' + bi + '" title="' + esc(bdt) + '">' + (br.start ? fmtShort(br.start) : '＋期') + '</button>' +
+            '<button class="item-del" data-act="branch-del" data-i="' + i + '" data-b="' + bi + '" title="删除此分支">×</button>' +
+          '</div>' +
+          '<div class="it-dates">' +
+            '<input type="date" data-act="bd-start" data-i="' + i + '" data-b="' + bi + '" value="' + esc(br.start) + '">' +
+            '<span class="arrow">→</span>' +
+            '<input type="date" data-act="bd-end" data-i="' + i + '" data-b="' + bi + '" value="' + esc(br.end) + '">' +
+          '</div>' +
+        '</li>';
+      }).join('');
       return '<li class="item-li' + (it.done ? ' done' : '') + '">' +
         '<div class="it-row">' +
           '<span class="chk" data-act="item" data-i="' + i + '" title="点击勾选 / 取消">✓</span>' +
-          '<span class="it-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
+          '<span class="it-t it-main-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
           '<button class="it-st" data-act="item-status" data-i="' + i + '" style="color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '" title="点击切换状态">' + st.short + '</button>' +
-          '<button class="it-date' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
+          '<button class="it-date it-main' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
           '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
         '</div>' +
         '<div class="it-dates">' +
@@ -727,6 +795,8 @@
           '<span class="arrow">→</span>' +
           '<input type="date" data-act="d-end" data-i="' + i + '" value="' + esc(it.end) + '">' +
         '</div>' +
+        (branchesHtml ? '<ul class="branches">' + branchesHtml + '</ul>' : '') +
+        '<button class="add-item add-branch" data-act="add-branch" data-i="' + i + '" title="在此子项下新增分支">＋ 分支</button>' +
       '</li>';
     }).join('');
     var prioHtml = m.prio !== undefined
@@ -745,7 +815,7 @@
       '<ul class="items">' + itemsHtml + '</ul>' +
       '<button class="add-item" data-act="add-item" title="新增子项">＋ 添加子项</button>' +
       '<textarea class="notes" rows="2" placeholder="备注：卡点、结论、下一步…">' + esc(m.notes) + '</textarea>' +
-      '<div class="card-foot"><span class="mini">子项 ' + done + '/' + m.items.length + prioHtml + '</span>' + delHtml + '</div>' +
+      '<div class="card-foot"><span class="mini">子项 ' + done + '/' + m.items.length + (brTotal ? ' · 分支 ' + brDone + '/' + brTotal : '') + prioHtml + '</span>' + delHtml + '</div>' +
     '</article>';
   }
 
@@ -773,15 +843,31 @@
   }
 
   /* ---------- gantt ---------- */
-  function itemRange(m) {
-    var a = null, b = null;
-    m.items.forEach(function (it) {
-      var s = parseD(it.start), e = parseD(it.end) || parseD(it.start);
-      if (!s) return;
-      if (!a || dayNum(s) < dayNum(a)) a = s;
-      if (!b || dayNum(e) > dayNum(b)) b = e;
+  function spanOf(s, e) {
+    if (!s) return null;
+    return { a: s, b: e || s };
+  }
+  function mergeSpan(acc, sp) {
+    if (!sp) return acc;
+    if (!acc) return { a: sp.a, b: sp.b };
+    if (dayNum(sp.a) < dayNum(acc.a)) acc.a = sp.a;
+    if (dayNum(sp.b) > dayNum(acc.b)) acc.b = sp.b;
+    return acc;
+  }
+  function kidsSpan(it) {
+    var acc = null;
+    (it.children || []).forEach(function (br) {
+      acc = mergeSpan(acc, spanOf(parseD(br.start), parseD(br.end)));
     });
-    return a && b ? { a: a, b: b } : null;
+    return acc;
+  }
+  function itemRange(m) {
+    var acc = null;
+    m.items.forEach(function (it) {
+      acc = mergeSpan(acc, spanOf(parseD(it.start), parseD(it.end)));
+      acc = mergeSpan(acc, kidsSpan(it));
+    });
+    return acc;
   }
 
   function renderGantt() {
@@ -799,6 +885,11 @@
         var s = parseD(it.start), e = parseD(it.end) || parseD(it.start);
         if (s) dates.push(s);
         if (e) dates.push(e);
+        (it.children || []).forEach(function (br) {
+          var bs = parseD(br.start), be = parseD(br.end) || parseD(br.start);
+          if (bs) dates.push(bs);
+          if (be) dates.push(be);
+        });
       });
     });
 
@@ -846,20 +937,23 @@
 
     var rows = '';
     all.forEach(function (m) {
-      var doneN = 0;
-      m.items.forEach(function (it) { if (it.done || it.status === '已完成') doneN++; });
+      var doneN = 0, totN = 0;
+      m.items.forEach(function (it) {
+        totN++; if (it.done || it.status === '已完成') doneN++;
+        (it.children || []).forEach(function (br) { totN++; if (br.done || br.status === '已完成') doneN++; });
+      });
       var rg = itemRange(m);
 
       rows += '<div class="g-row g-card-row">' +
         '<div class="g-name">' +
           '<span class="g-no">' + esc(m.no || '★') + '</span>' +
           '<span class="g-txt" title="' + esc(m.title) + '">' + esc(m.title) + '</span>' +
-          '<span class="g-cnt">' + doneN + '/' + m.items.length + '</span>' +
+          '<span class="g-cnt">' + doneN + '/' + totN + '</span>' +
         '</div>' +
         '<div class="g-lane" style="width:' + total + 'px">' + todayLine +
           (rg
             ? '<div class="g-bar g-sum" style="left:' + ((dayNum(rg.a) - dayNum(minD)) * dayW) + 'px;width:' + Math.max(dayW, (dayNum(rg.b) - dayNum(rg.a) + 1) * dayW) + 'px;color:var(--accent);background:var(--accent-soft);border-color:#C9C9F5">' +
-              '<i class="g-fill" style="width:' + (m.items.length ? Math.round(doneN / m.items.length * 100) : 0) + '%"></i>' +
+              '<i class="g-fill" style="width:' + (totN ? Math.round(doneN / totN * 100) : 0) + '%"></i>' +
               '</div>'
             : '') +
         '</div>' +
@@ -876,6 +970,14 @@
           bar = '<div class="g-bar" title="' + esc(it.t) + ' · ' + esc(it.start) + ' → ' + esc(it.end || it.start) + '" ' +
             'style="left:' + lft + 'px;width:' + wid + 'px;color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '">' +
             '<span>' + label + '</span></div>';
+        } else {
+          var ks = kidsSpan(it);
+          if (ks) {
+            var kd = 0, kt = 0;
+            (it.children || []).forEach(function (br) { kt++; if (br.done || br.status === '已完成') kd++; });
+            bar = '<div class="g-bar g-sum" title="分支汇总 · ' + kd + '/' + kt + '" style="left:' + ((dayNum(ks.a) - dayNum(minD)) * dayW) + 'px;width:' + Math.max(dayW, (dayNum(ks.b) - dayNum(ks.a) + 1) * dayW) + 'px;color:var(--accent2);background:var(--c-purple-bg);border-color:var(--c-purple-bd)">' +
+              '<i class="g-fill" style="width:' + (kt ? Math.round(kd / kt * 100) : 0) + '%"></i></div>';
+          }
         }
         rows += '<div class="g-row g-item-row">' +
           '<div class="g-name">' +
@@ -884,9 +986,31 @@
           '</div>' +
           '<div class="g-lane" style="width:' + total + 'px">' + todayLine +
             bar +
-            (s ? '' : '<span class="g-nodate">未排期</span>') +
+            ((!bar && !(it.children || []).length) ? '<span class="g-nodate">未排期</span>' : '') +
           '</div>' +
         '</div>';
+
+        (it.children || []).forEach(function (br) {
+          var bs = parseD(br.start), be = parseD(br.end) || parseD(br.start);
+          var bst = ST_STYLE[br.status] || ST_STYLE['未开始'];
+          var bbr = '';
+          if (bs && be) {
+            var bl = (dayNum(bs) - dayNum(minD)) * dayW;
+            var bw = Math.max(dayW, (dayNum(be) - dayNum(bs) + 1) * dayW);
+            bbr = '<div class="g-bar" title="' + esc(br.t) + ' · ' + esc(br.start) + ' → ' + esc(br.end || br.start) + '" ' +
+              'style="left:' + bl + 'px;width:' + bw + 'px;color:' + bst.fg + ';background:' + bst.bg + ';border-color:' + bst.bd + '"></div>';
+          }
+          rows += '<div class="g-row g-branch-row">' +
+            '<div class="g-name">' +
+              '<i class="lg-dot" style="flex:none;width:8px;height:8px;background:' + bst.bg + ';border-color:' + bst.bd + '"></i>' +
+              '<span class="g-txt" title="' + esc(br.t) + '">' + esc(br.t) + '</span>' +
+            '</div>' +
+            '<div class="g-lane" style="width:' + total + 'px">' + todayLine +
+              bbr +
+              (bs ? '' : '<span class="g-nodate">未排期</span>') +
+            '</div>' +
+          '</div>';
+        });
       });
     });
 
@@ -1012,9 +1136,70 @@
         sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
         m = findCard(sec, card.getAttribute('data-id'));
         if (!m) return;
-        m.items.push({ t: '新子项（点击文字可编辑）', done: false, status: '未开始', start: '', end: '' });
+        m.items.push({ t: '新子项（点击文字可编辑）', done: false, status: '未开始', start: '', end: '', children: [] });
         save(); render();
-        focusItem(card.getAttribute('data-id'), m.items.length - 1);
+        focusEl(card.getAttribute('data-id'), '.it-main-t[data-i="' + (m.items.length - 1) + '"]');
+        break;
+
+      case 'add-branch':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        if (!m.items[idx]) return;
+        if (!m.items[idx].children) m.items[idx].children = [];
+        m.items[idx].children.push({ t: '新分支（点击文字可编辑）', done: false, status: '未开始', start: '', end: '' });
+        save(); render();
+        focusEl(card.getAttribute('data-id'), '.br-t[data-i="' + idx + '"][data-b="' + (m.items[idx].children.length - 1) + '"]');
+        break;
+
+      case 'branch-check':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        var bi1 = parseInt(btn.getAttribute('data-b'), 10);
+        var ch1 = m.items[idx] && m.items[idx].children && m.items[idx].children[bi1];
+        if (!ch1) return;
+        ch1.done = !ch1.done;
+        ch1.status = ch1.done ? '已完成' : '未开始';
+        save(); render();
+        break;
+
+      case 'branch-status':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        var bi2 = parseInt(btn.getAttribute('data-b'), 10);
+        var ch2 = m.items[idx] && m.items[idx].children && m.items[idx].children[bi2];
+        if (!ch2) return;
+        ch2.status = STATUS[(STATUS.indexOf(ch2.status) + 1) % STATUS.length];
+        ch2.done = ch2.status === '已完成';
+        save(); render();
+        break;
+
+      case 'branch-date': {
+        var bli = btn.closest('.br-li');
+        if (bli) bli.classList.toggle('open');
+        break;
+      }
+
+      case 'branch-del':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        var bi3 = parseInt(btn.getAttribute('data-b'), 10);
+        var ch3 = m.items[idx] && m.items[idx].children;
+        if (!ch3 || !ch3[bi3]) return;
+        if (!confirm('删除分支「' + ch3[bi3].t + '」？')) return;
+        ch3.splice(bi3, 1);
+        save(); render();
         break;
 
       case 'item-del':
@@ -1104,105 +1289,89 @@
     var el = e.target;
     if (!(el instanceof HTMLInputElement)) return;
     var act = el.getAttribute('data-act');
-    if (act !== 'd-start' && act !== 'd-end') return;
+    var isItem = act === 'd-start' || act === 'd-end';
+    var isBr = act === 'bd-start' || act === 'bd-end';
+    if (!isItem && !isBr) return;
     var card = el.closest('.card');
     if (!card) return;
     var sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
     var m = findCard(sec, card.getAttribute('data-id'));
     if (!m) return;
     var i = parseInt(el.getAttribute('data-i'), 10);
-    if (!m.items[i]) return;
-    if (act === 'd-start') m.items[i].start = el.value; else m.items[i].end = el.value;
-    if (m.items[i].start && m.items[i].end && m.items[i].end < m.items[i].start) {
-      m.items[i].end = m.items[i].start;
-      var endEl = card.querySelector('.it-dates input[data-act="d-end"][data-i="' + i + '"]');
-      if (endEl) endEl.value = m.items[i].end;
-    }
+    var b = el.getAttribute('data-b') !== null ? parseInt(el.getAttribute('data-b'), 10) : null;
     var it = m.items[i];
-    var chip = card.querySelector('.it-date[data-i="' + i + '"]');
+    var target = null, prefix = '';
+    if (isItem) { target = it; prefix = 'd'; }
+    else if (isBr && it && it.children) { target = it.children[b]; prefix = 'bd'; }
+    if (!target) return;
+    if (act === prefix + '-start') target.start = el.value; else target.end = el.value;
+    if (target.start && target.end && target.end < target.start) {
+      target.end = target.start;
+      var endSel = '.it-dates input[data-act="' + prefix + '-end"][data-i="' + i + '"]' + (isBr ? '[data-b="' + b + '"]' : '');
+      var endEl = card.querySelector(endSel);
+      if (endEl) endEl.value = target.end;
+    }
+    var chip;
+    if (isItem) {
+      chip = card.querySelector('.it-date.it-main[data-i="' + i + '"]');
+    } else {
+      chip = card.querySelector('.br-date[data-i="' + i + '"][data-b="' + b + '"]');
+    }
     if (chip) {
-      chip.textContent = it.start ? fmtShort(it.start) : '＋期';
-      chip.classList.toggle('has', !!it.start);
-      chip.title = it.start ? ('排期 ' + it.start + ' → ' + (it.end || it.start)) : '点击设置起止日期';
+      chip.textContent = target.start ? fmtShort(target.start) : '＋期';
+      chip.classList.toggle('has', !!target.start);
+      chip.title = target.start ? ('排期 ' + target.start + ' → ' + (target.end || target.start)) : '点击设置起止日期';
     }
     save();
     if (!document.getElementById('ganttView').hidden) renderGantt();
   });
 
-  /* notes / answer input — save without re-render to keep focus */
+  /* real-time save: notes + all inline editable text (saves on every keystroke) */
   document.addEventListener('input', function (e) {
-    var ta = e.target;
-    if (!(ta instanceof HTMLTextAreaElement) || !ta.classList.contains('notes')) return;
-    var card = ta.closest('[data-id]');
-    if (!card) return;
-    var id = card.getAttribute('data-id'), val = ta.value;
-    var i;
-    for (i = 0; i < state.main.length; i++) if (state.main[i].id === id) { state.main[i].notes = val; save(); return; }
-    for (i = 0; i < state.support.length; i++) if (state.support[i].id === id) { state.support[i].notes = val; save(); return; }
-    for (i = 0; i < state.questions.length; i++) if (state.questions[i].id === id) { state.questions[i].answer = val; save(); return; }
+    var el = e.target;
+    if (el instanceof HTMLTextAreaElement && el.classList.contains('notes')) {
+      var card = el.closest('[data-id]');
+      if (!card) return;
+      var id = card.getAttribute('data-id'), val = el.value, i;
+      for (i = 0; i < state.main.length; i++) if (state.main[i].id === id) { state.main[i].notes = val; save(); return; }
+      for (i = 0; i < state.support.length; i++) if (state.support[i].id === id) { state.support[i].notes = val; save(); return; }
+      for (i = 0; i < state.questions.length; i++) if (state.questions[i].id === id) { state.questions[i].answer = val; save(); return; }
+      return;
+    }
+    if (el instanceof HTMLElement && el.isContentEditable) {
+      var loc = locateEditable(el);
+      if (loc) { loc.obj[loc.field] = el.textContent; save(); }
+    }
   });
 
-  /* title inline rename */
+  /* inline text: normalize + save on blur */
   document.addEventListener('focusout', function (e) {
-    var h = e.target;
-    if (!(h instanceof HTMLElement)) return;
-    var act = h.getAttribute('data-act');
-    var card = h.closest('[data-id]');
-    if (!card) return;
-    var id = card.getAttribute('data-id');
-    var i;
-
-    if (act === 'title') {
-      var t = h.textContent.trim().replace(/\s+/g, ' ') || '未命名模块';
-      for (i = 0; i < state.main.length; i++) if (state.main[i].id === id) { state.main[i].title = t; break; }
-      for (i = 0; i < state.support.length; i++) if (state.support[i].id === id) { state.support[i].title = t; break; }
-      h.textContent = t;
-      save();
-      return;
-    }
-
-    if (act === 'desc') {
-      var dsec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
-      var dm = findCard(dsec, id);
-      if (!dm) return;
-      dm.desc = h.textContent.trim().replace(/\s+/g, ' ');
-      h.textContent = dm.desc;
-      save();
-      return;
-    }
-
-    if (act === 'item-t') {
-      var sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
-      var m = findCard(sec, id);
-      if (!m) return;
-      var idx = parseInt(h.getAttribute('data-i'), 10);
-      if (!m.items[idx]) return;
-      var txt = h.textContent.trim().replace(/\s+/g, ' ');
-      if (!txt) { h.textContent = m.items[idx].t; return; }
-      m.items[idx].t = txt;
-      h.textContent = txt;
-      save();
-      return;
-    }
-
-    if (act === 'qtitle' || act === 'qhint') {
-      var q = null;
-      for (i = 0; i < state.questions.length; i++) if (state.questions[i].id === id) q = state.questions[i];
-      if (!q) return;
-      var v = h.textContent.trim().replace(/\s+/g, ' ');
-      if (!v) { h.textContent = act === 'qtitle' ? q.title : q.hint; return; }
-      if (act === 'qtitle') q.title = v; else q.hint = v;
-      h.textContent = v;
-      save();
-      return;
-    }
+    var el = e.target;
+    if (!(el instanceof HTMLElement) || !el.isContentEditable) return;
+    var loc = locateEditable(el);
+    if (!loc) return;
+    var t = el.textContent.trim().replace(/\s+/g, ' ');
+    if (!t && loc.act !== 'desc') { el.textContent = loc.obj[loc.field]; return; }
+    loc.obj[loc.field] = t;
+    el.textContent = t;
+    save();
   });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Enter' || !(e.target instanceof HTMLElement)) return;
     var act = e.target.getAttribute('data-act');
-    if (act === 'title' || act === 'item-t' || act === 'qtitle') {
+    if (act === 'title' || act === 'desc' || act === 'item-t' || act === 'branch-t' || act === 'qtitle' || act === 'qhint') {
       e.preventDefault();
       e.target.blur();
+    }
+  });
+
+  /* flush pending inline edit when the page is closed or refreshed */
+  window.addEventListener('beforeunload', function () {
+    var ae = document.activeElement;
+    if (ae && ae.isContentEditable) {
+      var loc = locateEditable(ae);
+      if (loc) loc.obj[loc.field] = ae.textContent;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e2) { /* ignore */ }
     }
   });
 
