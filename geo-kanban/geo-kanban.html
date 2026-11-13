@@ -676,6 +676,8 @@
   var state = load();
 
   /* ---------- persistence ---------- */
+  var SERVER_SYNC = false;   /* 探测 /api/data 成功后为 true：保存时同步到服务器 */
+  var pushTimer = null;
   function normalize(s) {
     ['main', 'support'].forEach(function (k) {
       if (!Array.isArray(s[k])) s[k] = [];
@@ -717,10 +719,42 @@
       localStorage.setItem(KEY, JSON.stringify(state));
       var t = new Date();
       var hh = ('0' + t.getHours()).slice(-2), mm = ('0' + t.getMinutes()).slice(-2), ss = ('0' + t.getSeconds()).slice(-2);
-      document.getElementById('savedAt').textContent = '已自动保存 · ' + hh + ':' + mm + ':' + ss;
+      document.getElementById('savedAt').textContent = '已自动保存' + (SERVER_SYNC ? ' · 已同步服务器' : '') + ' · ' + hh + ':' + mm + ':' + ss;
+      queueServerPush();
     } catch (e) {
       document.getElementById('savedAt').textContent = '⚠ 保存失败（浏览器本地存储不可用）';
     }
+  }
+  function queueServerPush() {
+    if (!SERVER_SYNC) return;
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () {
+      pushTimer = null;
+      try {
+        fetch('/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ version: 1, main: state.main, support: state.support, questions: state.questions })
+        }).catch(function () {});
+      } catch (e) { /* ignore */ }
+    }, 400);
+  }
+  function serverSync(done) {
+    try {
+      fetch('/api/data', { cache: 'no-store' }).then(function (r) {
+        return r.ok ? r.json() : null;
+      }).then(function (d) {
+        if (d && typeof d === 'object') {
+          SERVER_SYNC = true;
+          if (Array.isArray(d.main) && Array.isArray(d.support) && (d.main.length + d.support.length > 0)) {
+            state = normalize(d);
+          }
+          render();
+          save();
+        }
+        if (done) done(SERVER_SYNC);
+      }).catch(function () { if (done) done(false); });
+    } catch (e) { if (done) done(false); }
   }
 
   /* ---------- helpers ---------- */
@@ -1521,6 +1555,7 @@
   /* init */
   render();
   save();
+  serverSync();
 })();
 </script>
 </body>

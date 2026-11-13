@@ -1,0 +1,550 @@
+{
+  "version": 1,
+  "main": [
+    {
+      "id": "c1794534560139",
+      "title": "知识库管理",
+      "desc": "用户数据整理、收集",
+      "prio": "—",
+      "status": "优化中",
+      "notes": "",
+      "items": [
+        {
+          "t": "图片",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "自动分析图片标题、内容",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "图片内容提取",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            }
+          ]
+        },
+        {
+          "t": "内容展示",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "自动分析总结",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "打分：质量分和标准分",
+              "done": false,
+              "status": "开发中",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "内容和图片关联",
+              "done": false,
+              "status": "开发中",
+              "start": "2026-11-16",
+              "end": "2026-11-20"
+            },
+            {
+              "t": "通过问题反推所需内容",
+              "done": false,
+              "status": "开发中",
+              "start": "2026-11-16",
+              "end": "2026-11-27"
+            },
+            {
+              "t": "内容再审核",
+              "done": false,
+              "status": "开发中",
+              "start": "2026-11-16",
+              "end": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "t": "文档解析",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "no": "02",
+      "title": "问题生成（L0–L4）",
+      "desc": "多层级问题体系：从品牌词到长尾决策链，覆盖不同用户意图深度。",
+      "status": "优化中",
+      "notes": "问题生成结果需要再优化",
+      "items": [
+        {
+          "t": "分析知识库数据",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "问题层级规划L0-L4",
+          "done": false,
+          "status": "优化中",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "问题生成工作流",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "m3",
+      "no": "03",
+      "title": "写文章（多模板）",
+      "desc": "内容生产环节：多套模板适配不同问题类型与渠道调性，批量产出可被引用的内容。",
+      "status": "优化中",
+      "notes": "",
+      "items": [
+        {
+          "t": "模板体系设计",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "知识库内容自动提取",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "生成质量评估",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "批量生成流水线",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "北极星指标：文章引用率",
+          "done": false,
+          "status": "优化中",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "文章发布是否成功",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m4",
+      "no": "04",
+      "title": "发文章（渠道 + RPA）",
+      "desc": "内容分发环节：渠道 API 发文与 RPA 发文双通道，覆盖目标平台。",
+      "status": "优化中",
+      "notes": "",
+      "items": [
+        {
+          "t": "渠道发文 API",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "媒体批发网",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "超级媒介",
+              "done": false,
+              "status": "调研中",
+              "start": "",
+              "end": ""
+            }
+          ]
+        },
+        {
+          "t": "RPA 发文",
+          "done": false,
+          "status": "未开始",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "问题1：之前会被封禁，可能和文章内容和频率有关系",
+              "done": false,
+              "status": "优化中",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "问题2:不是蓝V账号，发文不被采用，或发文链接无效",
+              "done": false,
+              "status": "已阻塞",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "问题3：账号不够，如网易号等账号数量较少",
+              "done": false,
+              "status": "已阻塞",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "支持常发：头条、知乎、百家、bilibili、企鹅、搜狐号",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "支持未发：新浪号、博客园、简书、CSDN、什么值得买",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "待支持：携程旅行",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "m5",
+      "no": "05",
+      "title": "结果探测（API + RPA）",
+      "desc": "效果探测环节：探测内容在生成式引擎中的引用情况，双通道互为备份。",
+      "status": "优化中",
+      "notes": "",
+      "items": [
+        {
+          "t": "API 探测通道",
+          "done": false,
+          "status": "已阻塞",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "问题：不够准",
+              "done": false,
+              "status": "已阻塞",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "国内：豆包、seepseek、千问、文心、kimi、元宝、纳米、智谱",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "国外支持：gemini/Google AI Mode/Google AI Overview、chatgpt、Grok、Claude、Perplexity、",
+              "done": false,
+              "status": "调研中",
+              "start": "2026-11-16",
+              "end": "2026-11-20"
+            }
+          ]
+        },
+        {
+          "t": "RPA 探测通道",
+          "done": false,
+          "status": "优化中",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "问题：不支持大量",
+              "done": false,
+              "status": "已阻塞",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "账号：国内手机号，对接接码平台",
+              "done": false,
+              "status": "调研中",
+              "start": "2026-11-16",
+              "end": "2026-11-20"
+            },
+            {
+              "t": "账号：国外邮箱",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "防封禁：动态IP",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "国内：豆包、seepseek、千问、文心、kimi、元宝、",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "国外支持：gemini/Google AI Mode/Google AI Overview、chatgpt、Grok、Claude、Perplexity、",
+              "done": false,
+              "status": "未开始",
+              "start": "2026-11-23",
+              "end": "2026-11-27"
+            },
+            {
+              "t": "国内：纳米、智谱",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        },
+        {
+          "t": "探测频率与调度",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "每周3次",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c1794533534726",
+      "no": "N6",
+      "title": "报告生成",
+      "desc": "用户侧看到的数据",
+      "prio": "—",
+      "status": "优化中",
+      "notes": "",
+      "items": [
+        {
+          "t": "周报",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "月报",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": []
+        },
+        {
+          "t": "诊断报告",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "官网数据分析",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "官网GEO技术分析",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "模板优化",
+              "done": false,
+              "status": "优化中",
+              "start": "",
+              "end": ""
+            }
+          ]
+        },
+        {
+          "t": "统计内容",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "提及率",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "舆情分析",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "竞品统计",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "support": [
+    {
+      "id": "c1794479383955",
+      "no": "S1",
+      "title": "发文算法",
+      "desc": "",
+      "prio": "—",
+      "status": "优化中",
+      "notes": "品类文章发布，算法需要调优\n品牌文章发布，token花费方面需要统一起来",
+      "items": [
+        {
+          "t": "品牌文章发布",
+          "done": false,
+          "status": "优化中",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "问题：目前RPA为主",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        },
+        {
+          "t": "品类文章发布",
+          "done": true,
+          "status": "已完成",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "价格考虑方面优化",
+              "done": false,
+              "status": "开发中",
+              "start": "2026-11-16",
+              "end": "2026-11-20"
+            },
+            {
+              "t": "T0-T4分类细化",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        },
+        {
+          "t": "成本控制",
+          "done": false,
+          "status": "未开始",
+          "start": "",
+          "end": "",
+          "children": [
+            {
+              "t": "媒体批发网成本",
+              "done": true,
+              "status": "已完成",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "文章生成token成本",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            },
+            {
+              "t": "明确知道多少成本能达成效果",
+              "done": false,
+              "status": "未开始",
+              "start": "",
+              "end": ""
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "questions": []
+}
