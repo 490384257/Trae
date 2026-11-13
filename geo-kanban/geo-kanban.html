@@ -803,8 +803,8 @@
         return '<li class="br-li' + (br.done ? ' done' : '') + '">' +
           '<div class="it-row br-row">' +
             '<span class="chk" data-act="branch-check" data-i="' + i + '" data-b="' + bi + '" title="点击勾选 / 取消">✓</span>' +
-            '<span class="it-t br-t" contenteditable="true" spellcheck="false" data-act="branch-t" data-i="' + i + '" data-b="' + bi + '" title="点击可编辑">' + esc(br.t) + '</span>' +
             '<button class="it-st" data-act="branch-status" data-i="' + i + '" data-b="' + bi + '" style="color:' + bst.fg + ';background:' + bst.bg + ';border-color:' + bst.bd + '" title="点击切换状态">' + bst.short + '</button>' +
+            '<span class="it-t br-t" contenteditable="true" spellcheck="false" data-act="branch-t" data-i="' + i + '" data-b="' + bi + '" title="点击可编辑">' + esc(br.t) + '</span>' +
             '<span class="row-actions">' +
               '<button class="it-date br-date' + (br.start ? ' has' : '') + '" data-act="branch-date" data-i="' + i + '" data-b="' + bi + '" title="' + esc(bdt) + '">' + (br.start ? fmtShort(br.start) : '＋期') + '</button>' +
               (bi > 0 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="up" title="上移">↑</button>' : '') +
@@ -822,8 +822,8 @@
       return '<li class="item-li' + (it.done ? ' done' : '') + '">' +
         '<div class="it-row">' +
           '<span class="chk" data-act="item" data-i="' + i + '" title="点击勾选 / 取消">✓</span>' +
-          '<span class="it-t it-main-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
           '<button class="it-st" data-act="item-status" data-i="' + i + '" style="color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '" title="点击切换状态">' + st.short + '</button>' +
+          '<span class="it-t it-main-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
           '<span class="row-actions">' +
             '<button class="it-date it-main' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
             (i > 0 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="up" title="上移">↑</button>' : '') +
