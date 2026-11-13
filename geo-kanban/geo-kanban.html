@@ -191,10 +191,9 @@
       flex: none; width: 20px; height: 20px; margin-top: 1px;
       border: none; border-radius: 6px; background: none;
       color: var(--muted); font-size: 15px; line-height: 1; cursor: pointer;
-      opacity: 0; transition: opacity .12s, background .12s, color .12s;
+      transition: background .12s, color .12s;
     }
-    ul.items li:hover .item-del { opacity: .8; }
-    .item-del:hover { opacity: 1; background: var(--c-red-bg); color: var(--c-red); }
+    .item-del:hover { background: var(--c-red-bg); color: var(--c-red); }
     .add-item {
       font-family: var(--font); font-size: 12px; font-weight: 600;
       color: var(--accent); background: none; border: none;
@@ -211,8 +210,17 @@
     .it-row {
       display: flex; gap: 6px; align-items: flex-start;
       padding: 5px 6px 5px 8px; border-radius: 8px; cursor: default;
+      position: relative;
     }
     .it-row:hover { background: var(--bg); }
+    .row-actions {
+      position: absolute; right: 3px; top: 3px;
+      display: flex; gap: 1px; align-items: center;
+      padding: 1px 2px 1px 16px; border-radius: 8px;
+      background: linear-gradient(to right, rgba(246,247,251,0), var(--bg) 12px);
+      opacity: 0; pointer-events: none; transition: opacity .12s;
+    }
+    .it-row:hover .row-actions { opacity: 1; pointer-events: auto; }
     .it-st {
       flex: none; font-family: var(--font); font-size: 10.5px; font-weight: 700;
       padding: 1px 6px; margin-top: 2px; border-radius: 999px;
@@ -283,10 +291,12 @@
       flex: none; width: 18px; height: 20px; margin-top: 1px; padding: 0;
       border: none; background: none;
       color: var(--muted); font-family: var(--font); font-size: 12px; line-height: 1;
-      cursor: pointer; opacity: 0; transition: opacity .12s, color .12s;
+      cursor: pointer; transition: color .12s;
     }
-    ul.items li:hover .mv-btn, .card:hover .foot-btns .mv-btn { opacity: .65; }
-    .mv-btn:hover { opacity: 1 !important; color: var(--accent); }
+    .mv-btn:hover { color: var(--accent); }
+    .foot-btns .mv-btn { opacity: 0; transition: opacity .12s, color .12s; }
+    .card:hover .foot-btns .mv-btn { opacity: .65; }
+    .foot-btns .mv-btn:hover { opacity: 1; }
     .foot-btns { display: flex; align-items: center; gap: 2px; }
 
     /* ============ Question rows ============ */
@@ -452,11 +462,15 @@
       .qrow { grid-template-columns: 1fr; }
       .q-no { width: fit-content; padding: 4px 12px; }
       .masthead { padding-top: 22px; }
-      .item-del, .q-del, .mv-btn { opacity: .55; }
+      .q-del { opacity: .55; }
+      .foot-btns .mv-btn { opacity: .6; }
+      .row-actions { position: static; opacity: 1; pointer-events: auto; background: none; padding: 0 0 0 2px; }
+      .it-row { flex-wrap: wrap; }
       .q-actions { flex-direction: row; align-items: center; justify-content: flex-end; }
     }
     @media print {
       .toolbar, .add-btn, .del-btn, .item-del, .add-item, .mv-btn { display: none; }
+      .row-actions { position: static; opacity: 1; background: none; pointer-events: auto; }
       .card, .qrow { break-inside: avoid; box-shadow: none; }
       body { background: #fff; }
     }
@@ -479,7 +493,7 @@
     </header>
 
     <div class="tipbar">
-      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务 · 悬停行或卡片用 <strong>↑ / ↓</strong> 调整顺序，编号按位置自动排（01、02、03…）· 状态点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 点「＋期」设起止日期 · 顶部可切<strong>甘特图视角</strong>
+      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务 · <strong>悬停行尾</strong>浮现操作：＋期设起止日期（设完自动收起）、↑↓调顺序、×删除 · 悬停卡片底部可移动模块，编号按位置自动排（01、02…）· 状态点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 顶部可切<strong>甘特图视角</strong>
     </div>
 
     <div class="kpis">
@@ -791,10 +805,12 @@
             '<span class="chk" data-act="branch-check" data-i="' + i + '" data-b="' + bi + '" title="点击勾选 / 取消">✓</span>' +
             '<span class="it-t br-t" contenteditable="true" spellcheck="false" data-act="branch-t" data-i="' + i + '" data-b="' + bi + '" title="点击可编辑">' + esc(br.t) + '</span>' +
             '<button class="it-st" data-act="branch-status" data-i="' + i + '" data-b="' + bi + '" style="color:' + bst.fg + ';background:' + bst.bg + ';border-color:' + bst.bd + '" title="点击切换状态">' + bst.short + '</button>' +
-            '<button class="it-date br-date' + (br.start ? ' has' : '') + '" data-act="branch-date" data-i="' + i + '" data-b="' + bi + '" title="' + esc(bdt) + '">' + (br.start ? fmtShort(br.start) : '＋期') + '</button>' +
-            (bi > 0 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="up" title="上移">↑</button>' : '') +
-            (bi < (it.children || []).length - 1 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="down" title="下移">↓</button>' : '') +
-            '<button class="item-del" data-act="branch-del" data-i="' + i + '" data-b="' + bi + '" title="删除此分支">×</button>' +
+            '<span class="row-actions">' +
+              '<button class="it-date br-date' + (br.start ? ' has' : '') + '" data-act="branch-date" data-i="' + i + '" data-b="' + bi + '" title="' + esc(bdt) + '">' + (br.start ? fmtShort(br.start) : '＋期') + '</button>' +
+              (bi > 0 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="up" title="上移">↑</button>' : '') +
+              (bi < (it.children || []).length - 1 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="down" title="下移">↓</button>' : '') +
+              '<button class="item-del" data-act="branch-del" data-i="' + i + '" data-b="' + bi + '" title="删除此分支">×</button>' +
+            '</span>' +
           '</div>' +
           '<div class="it-dates">' +
             '<input type="date" data-act="bd-start" data-i="' + i + '" data-b="' + bi + '" value="' + esc(br.start) + '">' +
@@ -808,10 +824,12 @@
           '<span class="chk" data-act="item" data-i="' + i + '" title="点击勾选 / 取消">✓</span>' +
           '<span class="it-t it-main-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
           '<button class="it-st" data-act="item-status" data-i="' + i + '" style="color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '" title="点击切换状态">' + st.short + '</button>' +
-          '<button class="it-date it-main' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
-          (i > 0 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="up" title="上移">↑</button>' : '') +
-          (i < m.items.length - 1 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="down" title="下移">↓</button>' : '') +
-          '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
+          '<span class="row-actions">' +
+            '<button class="it-date it-main' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
+            (i > 0 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="up" title="上移">↑</button>' : '') +
+            (i < m.items.length - 1 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="down" title="下移">↓</button>' : '') +
+            '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
+          '</span>' +
         '</div>' +
         '<div class="it-dates">' +
           '<input type="date" data-act="d-start" data-i="' + i + '" value="' + esc(it.start) + '">' +
@@ -1381,6 +1399,10 @@
       chip.textContent = target.start ? fmtShort(target.start) : '＋期';
       chip.classList.toggle('has', !!target.start);
       chip.title = target.start ? ('排期 ' + target.start + ' → ' + (target.end || target.start)) : '点击设置起止日期';
+    }
+    if (target.start && target.end) {
+      var li = el.closest('.br-li') || el.closest('.item-li');
+      if (li) li.classList.remove('open');
     }
     save();
     if (!document.getElementById('ganttView').hidden) renderGantt();
