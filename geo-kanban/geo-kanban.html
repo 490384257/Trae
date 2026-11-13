@@ -248,6 +248,13 @@
     }
     .it-dates input[type="date"]:focus { outline: none; border-color: var(--accent); background: var(--bg2); }
     .it-dates .arrow { font-size: 11px; color: var(--muted); }
+    .date-clear, .date-close {
+      flex: none; font-family: var(--font); font-size: 10.5px; font-weight: 600;
+      padding: 1px 8px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--rule); background: var(--bg2); color: var(--muted);
+    }
+    .date-clear:hover { color: var(--c-red); border-color: var(--c-red-bd); background: var(--c-red-bg); }
+    .date-close:hover { color: var(--accent); border-color: var(--accent); }
 
     /* ---- branches under sub-items ---- */
     ul.branches {
@@ -493,7 +500,7 @@
     </header>
 
     <div class="tipbar">
-      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务 · <strong>悬停行尾</strong>浮现操作：＋期设起止日期（设完自动收起）、↑↓调顺序、×删除 · 悬停卡片底部可移动模块，编号按位置自动排（01、02…）· 状态点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 顶部可切<strong>甘特图视角</strong>
+      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务 · <strong>悬停行尾</strong>浮现操作：＋期设起止日期（可清除 / 收起）、↑↓调顺序、×删除 · 悬停卡片底部可移动模块，编号按位置自动排（01、02…）· 状态在行首点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 顶部可切<strong>甘特图视角</strong>
     </div>
 
     <div class="kpis">
@@ -816,6 +823,8 @@
             '<input type="date" data-act="bd-start" data-i="' + i + '" data-b="' + bi + '" value="' + esc(br.start) + '">' +
             '<span class="arrow">→</span>' +
             '<input type="date" data-act="bd-end" data-i="' + i + '" data-b="' + bi + '" value="' + esc(br.end) + '">' +
+            '<button class="date-clear" data-act="date-clear" data-i="' + i + '" data-b="' + bi + '" title="清除该分支的排期">清除</button>' +
+            '<button class="date-close" data-act="date-close" title="收起日期编辑">收起</button>' +
           '</div>' +
         '</li>';
       }).join('');
@@ -835,6 +844,8 @@
           '<input type="date" data-act="d-start" data-i="' + i + '" value="' + esc(it.start) + '">' +
           '<span class="arrow">→</span>' +
           '<input type="date" data-act="d-end" data-i="' + i + '" value="' + esc(it.end) + '">' +
+          '<button class="date-clear" data-act="date-clear" data-i="' + i + '" title="清除该子项的排期">清除</button>' +
+          '<button class="date-close" data-act="date-close" title="收起日期编辑">收起</button>' +
         '</div>' +
         (branchesHtml ? '<ul class="branches">' + branchesHtml + '</ul>' : '') +
         '<button class="add-item add-branch" data-act="add-branch" data-i="' + i + '" title="在此子项下新增分支">＋ 分支</button>' +
@@ -1235,6 +1246,33 @@
       case 'branch-date': {
         var bli = btn.closest('.br-li');
         if (bli) bli.classList.toggle('open');
+        break;
+      }
+
+      case 'date-clear': {
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        var bAt = btn.getAttribute('data-b');
+        var dTgt = null;
+        if (bAt !== null && bAt !== undefined) {
+          var bi0 = parseInt(bAt, 10);
+          dTgt = m.items[idx] && m.items[idx].children && m.items[idx].children[bi0];
+        } else {
+          dTgt = m.items[idx];
+        }
+        if (!dTgt) return;
+        dTgt.start = '';
+        dTgt.end = '';
+        save(); render();
+        break;
+      }
+
+      case 'date-close': {
+        var liC = btn.closest('.br-li') || btn.closest('.item-li');
+        if (liC) liC.classList.remove('open');
         break;
       }
 
