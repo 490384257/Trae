@@ -278,6 +278,17 @@
     .card:hover .del-btn { opacity: .75; }
     .del-btn:hover { opacity: 1 !important; background: var(--c-red-bg); }
 
+    /* reorder buttons */
+    .mv-btn {
+      flex: none; width: 18px; height: 20px; margin-top: 1px; padding: 0;
+      border: none; background: none;
+      color: var(--muted); font-family: var(--font); font-size: 12px; line-height: 1;
+      cursor: pointer; opacity: 0; transition: opacity .12s, color .12s;
+    }
+    ul.items li:hover .mv-btn, .card:hover .foot-btns .mv-btn { opacity: .65; }
+    .mv-btn:hover { opacity: 1 !important; color: var(--accent); }
+    .foot-btns { display: flex; align-items: center; gap: 2px; }
+
     /* ============ Question rows ============ */
     .qrow {
       display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: start;
@@ -441,11 +452,11 @@
       .qrow { grid-template-columns: 1fr; }
       .q-no { width: fit-content; padding: 4px 12px; }
       .masthead { padding-top: 22px; }
-      .item-del, .q-del { opacity: .55; }
+      .item-del, .q-del, .mv-btn { opacity: .55; }
       .q-actions { flex-direction: row; align-items: center; justify-content: flex-end; }
     }
     @media print {
-      .toolbar, .add-btn, .del-btn, .item-del, .add-item { display: none; }
+      .toolbar, .add-btn, .del-btn, .item-del, .add-item, .mv-btn { display: none; }
       .card, .qrow { break-inside: avoid; box-shadow: none; }
       body { background: #fff; }
     }
@@ -468,7 +479,7 @@
     </header>
 
     <div class="tipbar">
-      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务，分支同样有状态和排期 · 状态点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 点「＋期」设起止日期 · 顶部可切<strong>甘特图视角</strong>
+      <b>用法</b>：标题 / 说明 / 子项 / 分支文字点击直接编辑（<strong>边打字边实时保存</strong>）· 每个子项下「＋ 分支」挂小任务 · 悬停行或卡片用 <strong>↑ / ↓</strong> 调整顺序，编号按位置自动排（01、02、03…）· 状态点击循环（未 / 调研 / 开发 / 优化 / 完成 / 阻塞）· 点「＋期」设起止日期 · 顶部可切<strong>甘特图视角</strong>
     </div>
 
     <div class="kpis">
@@ -715,6 +726,14 @@
     var p = String(s).split('-');
     return p.length === 3 ? (p[1] + '/' + p[2]) : s;
   }
+  function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+  function noOf(sec, idx) { return sec === 'main' ? pad2(idx + 1) : 'S' + pad2(idx + 1); }
+  function swapAt(arr, i, dir) {
+    var j = dir === 'up' ? i - 1 : i + 1;
+    if (j < 0 || j >= arr.length) return false;
+    var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    return true;
+  }
   function focusEl(cardId, sel) {
     var c = document.querySelector('.card[data-id="' + cardId + '"]');
     var t = c && c.querySelector(sel);
@@ -753,7 +772,7 @@
     return '<button class="pill ' + (COLOR[label] || 'c-gray') + '" data-act="' + act + '" title="点击切换状态">' + esc(label) + '</button>';
   }
 
-  function cardHtml(m) {
+  function cardHtml(m, sec, mi) {
     var done = 0, brDone = 0, brTotal = 0;
     m.items.forEach(function (it) {
       if (it.done) done++;
@@ -773,6 +792,8 @@
             '<span class="it-t br-t" contenteditable="true" spellcheck="false" data-act="branch-t" data-i="' + i + '" data-b="' + bi + '" title="点击可编辑">' + esc(br.t) + '</span>' +
             '<button class="it-st" data-act="branch-status" data-i="' + i + '" data-b="' + bi + '" style="color:' + bst.fg + ';background:' + bst.bg + ';border-color:' + bst.bd + '" title="点击切换状态">' + bst.short + '</button>' +
             '<button class="it-date br-date' + (br.start ? ' has' : '') + '" data-act="branch-date" data-i="' + i + '" data-b="' + bi + '" title="' + esc(bdt) + '">' + (br.start ? fmtShort(br.start) : '＋期') + '</button>' +
+            (bi > 0 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="up" title="上移">↑</button>' : '') +
+            (bi < (it.children || []).length - 1 ? '<button class="mv-btn" data-act="mv-branch" data-i="' + i + '" data-b="' + bi + '" data-dir="down" title="下移">↓</button>' : '') +
             '<button class="item-del" data-act="branch-del" data-i="' + i + '" data-b="' + bi + '" title="删除此分支">×</button>' +
           '</div>' +
           '<div class="it-dates">' +
@@ -788,6 +809,8 @@
           '<span class="it-t it-main-t" contenteditable="true" spellcheck="false" data-act="item-t" data-i="' + i + '" title="点击可编辑">' + esc(it.t) + '</span>' +
           '<button class="it-st" data-act="item-status" data-i="' + i + '" style="color:' + st.fg + ';background:' + st.bg + ';border-color:' + st.bd + '" title="点击切换状态">' + st.short + '</button>' +
           '<button class="it-date it-main' + (it.start ? ' has' : '') + '" data-act="item-date" data-i="' + i + '" title="' + esc(dateTitle) + '">' + (it.start ? fmtShort(it.start) : '＋期') + '</button>' +
+          (i > 0 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="up" title="上移">↑</button>' : '') +
+          (i < m.items.length - 1 ? '<button class="mv-btn" data-act="mv-item" data-i="' + i + '" data-dir="down" title="下移">↓</button>' : '') +
           '<button class="item-del" data-act="item-del" data-i="' + i + '" title="删除此子项">×</button>' +
         '</div>' +
         '<div class="it-dates">' +
@@ -805,7 +828,7 @@
     var delHtml = '<button class="del-btn" data-act="del" title="删除此卡片">删除</button>';
     return '<article class="card" data-id="' + esc(m.id) + '">' +
       '<div class="card-top">' +
-        '<span class="stage-no">' + esc(m.no || '★') + '</span>' +
+        '<span class="stage-no">' + esc(noOf(sec, mi)) + '</span>' +
         '<div class="card-title-wrap">' +
           '<h3 contenteditable="true" spellcheck="false" data-act="title" title="点击可重命名">' + esc(m.title) + '</h3>' +
           '<p class="desc" contenteditable="true" spellcheck="false" data-act="desc" title="点击可编辑说明">' + esc(m.desc) + '</p>' +
@@ -815,7 +838,12 @@
       '<ul class="items">' + itemsHtml + '</ul>' +
       '<button class="add-item" data-act="add-item" title="新增子项">＋ 添加子项</button>' +
       '<textarea class="notes" rows="2" placeholder="备注：卡点、结论、下一步…">' + esc(m.notes) + '</textarea>' +
-      '<div class="card-foot"><span class="mini">子项 ' + done + '/' + m.items.length + (brTotal ? ' · 分支 ' + brDone + '/' + brTotal : '') + prioHtml + '</span>' + delHtml + '</div>' +
+      '<div class="card-foot"><span class="mini">子项 ' + done + '/' + m.items.length + (brTotal ? ' · 分支 ' + brDone + '/' + brTotal : '') + prioHtml + '</span>' +
+        '<span class="foot-btns">' +
+          (mi > 0 ? '<button class="mv-btn" data-act="mv-card" data-dir="up" title="上移此模块">↑</button>' : '') +
+          (mi < state[sec].length - 1 ? '<button class="mv-btn" data-act="mv-card" data-dir="down" title="下移此模块">↓</button>' : '') +
+          delHtml +
+        '</span></div>' +
     '</article>';
   }
 
@@ -835,8 +863,8 @@
   }
 
   function render() {
-    document.getElementById('mainGrid').innerHTML = state.main.map(cardHtml).join('');
-    document.getElementById('supportGrid').innerHTML = state.support.map(cardHtml).join('');
+    document.getElementById('mainGrid').innerHTML = state.main.map(function (m, i) { return cardHtml(m, 'main', i); }).join('');
+    document.getElementById('supportGrid').innerHTML = state.support.map(function (m, i) { return cardHtml(m, 'support', i); }).join('');
     document.getElementById('qList').innerHTML = state.questions.map(qHtml).join('');
     renderKPIs();
     if (!document.getElementById('ganttView').hidden) renderGantt();
@@ -935,6 +963,10 @@
     var todayX = (dayNum(today) - dayNum(minD)) * dayW;
     var todayLine = todayIn ? '<div class="g-today" style="left:' + todayX + 'px;top:0;bottom:0"></div>' : '';
 
+    var noMap = {};
+    state.main.forEach(function (m, i) { noMap[m.id] = pad2(i + 1); });
+    state.support.forEach(function (m, i) { noMap[m.id] = 'S' + pad2(i + 1); });
+
     var rows = '';
     all.forEach(function (m) {
       var doneN = 0, totN = 0;
@@ -946,7 +978,7 @@
 
       rows += '<div class="g-row g-card-row">' +
         '<div class="g-name">' +
-          '<span class="g-no">' + esc(m.no || '★') + '</span>' +
+          '<span class="g-no">' + esc(noMap[m.id] || '★') + '</span>' +
           '<span class="g-txt" title="' + esc(m.title) + '">' + esc(m.title) + '</span>' +
           '<span class="g-cnt">' + doneN + '/' + totN + '</span>' +
         '</div>' +
@@ -1248,14 +1280,42 @@
 
       case 'add':
         sec = btn.getAttribute('data-sec');
-        var n = state[sec].length + 1;
         state[sec].push({
           id: 'c' + Date.now(),
-          no: sec === 'main' ? ('N' + n) : ('S' + n),
           title: '新模块（点击重命名）',
           desc: '', prio: '—', status: '未开始', notes: '', items: []
         });
         save(); render();
+        break;
+
+      case 'mv-card':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        var mi2 = -1;
+        for (var k1 = 0; k1 < state[sec].length; k1++) if (state[sec][k1].id === card.getAttribute('data-id')) mi2 = k1;
+        if (mi2 < 0) return;
+        if (swapAt(state[sec], mi2, btn.getAttribute('data-dir'))) { save(); render(); }
+        break;
+
+      case 'mv-item':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        if (swapAt(m.items, idx, btn.getAttribute('data-dir'))) { save(); render(); }
+        break;
+
+      case 'mv-branch':
+        if (!card) return;
+        sec = card.parentElement.id === 'mainGrid' ? 'main' : 'support';
+        m = findCard(sec, card.getAttribute('data-id'));
+        if (!m) return;
+        idx = parseInt(btn.getAttribute('data-i'), 10);
+        var bi5 = parseInt(btn.getAttribute('data-b'), 10);
+        var ch5 = m.items[idx] && m.items[idx].children;
+        if (!ch5) return;
+        if (swapAt(ch5, bi5, btn.getAttribute('data-dir'))) { save(); render(); }
         break;
 
       case 'export': {
